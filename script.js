@@ -1,242 +1,141 @@
-// Initialize configuration
-const config = window.VALENTINE_CONFIG;
+// =========================================
+// 1. LOGIKA EMOJI MELAYANG
+// =========================================
+const emojis = ['❤️','💖','💗','💓','🧸'];
 
-// Validate configuration
-function validateConfig() {
-    const warnings = [];
+function createFloating() {
+  const container = document.querySelector('.floating-elements');
+  
+  if (!container) return; 
 
-    // Check required fields
-    if (!config.valentineName) {
-        warnings.push("Valentine's name is not set! Using default.");
-        config.valentineName = "My Love";
-    }
-
-    // Validate colors
-    const isValidHex = (hex) => /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/.test(hex);
-    Object.entries(config.colors).forEach(([key, value]) => {
-        if (!isValidHex(value)) {
-            warnings.push(`Invalid color for ${key}! Using default.`);
-            config.colors[key] = getDefaultColor(key);
-        }
-    });
-
-    // Validate animation values
-    if (parseFloat(config.animations.floatDuration) < 5) {
-        warnings.push("Float duration too short! Setting to 5s minimum.");
-        config.animations.floatDuration = "5s";
-    }
-
-    if (config.animations.heartExplosionSize < 1 || config.animations.heartExplosionSize > 3) {
-        warnings.push("Heart explosion size should be between 1 and 3! Using default.");
-        config.animations.heartExplosionSize = 1.5;
-    }
-
-    // Log warnings if any
-    if (warnings.length > 0) {
-        console.warn("⚠️ Configuration Warnings:");
-        warnings.forEach(warning => console.warn("- " + warning));
-    }
-}
-
-// Default color values
-function getDefaultColor(key) {
-    const defaults = {
-        backgroundStart: "#ffafbd",
-        backgroundEnd: "#ffc3a0",
-        buttonBackground: "#ff6b6b",
-        buttonHover: "#ff8787",
-        textColor: "#ff4757"
-    };
-    return defaults[key];
-}
-
-// Set page title
-document.title = config.pageTitle;
-
-// Initialize the page content when DOM is loaded
-window.addEventListener('DOMContentLoaded', () => {
-    // Validate configuration first
-    validateConfig();
-
-    // Set texts from config
-    document.getElementById('valentineTitle').textContent = `${config.valentineName}, my love...`;
+  for (let i = 0; i < 25; i++) {
+    const el = document.createElement('div');
+    el.className = 'float'; 
+    el.innerHTML = emojis[Math.floor(Math.random() * emojis.length)];
     
-    // Set first question texts
-    document.getElementById('question1Text').textContent = config.questions.first.text;
-    document.getElementById('yesBtn1').textContent = config.questions.first.yesBtn;
-    document.getElementById('noBtn1').textContent = config.questions.first.noBtn;
-    document.getElementById('secretAnswerBtn').textContent = config.questions.first.secretAnswer;
+    el.style.left = Math.random() * 100 + 'vw';
+    el.style.animationDuration = (8 + Math.random() * 10) + 's';
+    el.style.animationDelay = Math.random() * 5 + 's';
     
-    // Set second question texts
-    document.getElementById('question2Text').textContent = config.questions.second.text;
-    document.getElementById('startText').textContent = config.questions.second.startText;
-    document.getElementById('nextBtn').textContent = config.questions.second.nextBtn;
-    
-    // Set third question texts
-    document.getElementById('question3Text').textContent = config.questions.third.text;
-    document.getElementById('yesBtn3').textContent = config.questions.third.yesBtn;
-    document.getElementById('noBtn3').textContent = config.questions.third.noBtn;
-
-    // Create initial floating elements
-    createFloatingElements();
-
-    // Setup music player
-    setupMusicPlayer();
-});
-
-// Create floating hearts and bears
-function createFloatingElements() {
-    const container = document.querySelector('.floating-elements');
-    
-    // Create hearts
-    config.floatingEmojis.hearts.forEach(heart => {
-        const div = document.createElement('div');
-        div.className = 'heart';
-        div.innerHTML = heart;
-        setRandomPosition(div);
-        container.appendChild(div);
-    });
-
-    // Create bears
-    config.floatingEmojis.bears.forEach(bear => {
-        const div = document.createElement('div');
-        div.className = 'bear';
-        div.innerHTML = bear;
-        setRandomPosition(div);
-        container.appendChild(div);
-    });
+    container.appendChild(el);
+  }
 }
 
-// Set random position for floating elements
-function setRandomPosition(element) {
-    element.style.left = Math.random() * 100 + 'vw';
-    element.style.animationDelay = Math.random() * 5 + 's';
-    element.style.animationDuration = 10 + Math.random() * 20 + 's';
-}
-
-// Function to show next question
-function showNextQuestion(questionNumber) {
-    document.querySelectorAll('.question-section').forEach(q => q.classList.add('hidden'));
-    document.getElementById(`question${questionNumber}`).classList.remove('hidden');
-}
-
-// Function to move the "No" button when clicked
-function moveButton(button) {
-    const x = Math.random() * (window.innerWidth - button.offsetWidth);
-    const y = Math.random() * (window.innerHeight - button.offsetHeight);
-    button.style.position = 'fixed';
-    button.style.left = x + 'px';
-    button.style.top = y + 'px';
-}
-
-// Love meter functionality
-const loveMeter = document.getElementById('loveMeter');
-const loveValue = document.getElementById('loveValue');
-const extraLove = document.getElementById('extraLove');
-
-function setInitialPosition() {
-    loveMeter.value = 100;
-    loveValue.textContent = 100;
-    loveMeter.style.width = '100%';
-}
-
-loveMeter.addEventListener('input', () => {
-    const value = parseInt(loveMeter.value);
-    loveValue.textContent = value;
-    
-    if (value > 100) {
-        extraLove.classList.remove('hidden');
-        const overflowPercentage = (value - 100) / 9900;
-        const extraWidth = overflowPercentage * window.innerWidth * 0.8;
-        loveMeter.style.width = `calc(100% + ${extraWidth}px)`;
-        loveMeter.style.transition = 'width 0.3s';
-        
-        // Show different messages based on the value
-        if (value >= 5000) {
-            extraLove.classList.add('super-love');
-            extraLove.textContent = config.loveMessages.extreme;
-        } else if (value > 1000) {
-            extraLove.classList.remove('super-love');
-            extraLove.textContent = config.loveMessages.high;
-        } else {
-            extraLove.classList.remove('super-love');
-            extraLove.textContent = config.loveMessages.normal;
-        }
-    } else {
-        extraLove.classList.add('hidden');
-        extraLove.classList.remove('super-love');
-        loveMeter.style.width = '100%';
-    }
-});
-
-// Initialize love meter
-window.addEventListener('DOMContentLoaded', setInitialPosition);
-window.addEventListener('load', setInitialPosition);
-
-// Celebration function
-function celebrate() {
-    document.querySelectorAll('.question-section').forEach(q => q.classList.add('hidden'));
-    const celebration = document.getElementById('celebration');
-    celebration.classList.remove('hidden');
-    
-    // Set celebration messages
-    document.getElementById('celebrationTitle').textContent = config.celebration.title;
-    document.getElementById('celebrationMessage').textContent = config.celebration.message;
-    document.getElementById('celebrationEmojis').textContent = config.celebration.emojis;
-    
-    // Create heart explosion effect
-    createHeartExplosion();
-}
-
-// Create heart explosion animation
-function createHeartExplosion() {
-    for (let i = 0; i < 50; i++) {
-        const heart = document.createElement('div');
-        const randomHeart = config.floatingEmojis.hearts[Math.floor(Math.random() * config.floatingEmojis.hearts.length)];
-        heart.innerHTML = randomHeart;
-        heart.className = 'heart';
-        document.querySelector('.floating-elements').appendChild(heart);
-        setRandomPosition(heart);
-    }
-}
-
-// Music Player Setup
-function setupMusicPlayer() {
-    const musicControls = document.getElementById('musicControls');
-    const musicToggle = document.getElementById('musicToggle');
-    const bgMusic = document.getElementById('bgMusic');
-    const musicSource = document.getElementById('musicSource');
-
-    // Only show controls if music is enabled in config
-    if (!config.music.enabled) {
-        musicControls.style.display = 'none';
-        return;
-    }
-
-    // Set music source and volume
-    musicSource.src = config.music.musicUrl;
-    bgMusic.volume = config.music.volume || 0.5;
+// =========================================
+// 2. LOGIKA MUSIK & LAYAR PEMBUKA
+// =========================================
+function initMusicAndWelcome() {
+  const musicToggle = document.getElementById('musicToggle');
+  const bgMusic = document.getElementById('bgMusic');
+  const musicSource = document.getElementById('musicSource');
+  
+  const welcomeScreen = document.getElementById('welcomeScreen');
+  const btnStart = document.getElementById('btnStart');
+  
+  if (musicToggle && bgMusic && musicSource && welcomeScreen && btnStart) {
+    musicSource.src = 'forbubu.mp3'; // File musikmu
     bgMusic.load();
-
-    // Try autoplay if enabled
-    if (config.music.autoplay) {
-        const playPromise = bgMusic.play();
-        if (playPromise !== undefined) {
-            playPromise.catch(error => {
-                console.log("Autoplay prevented by browser");
-                musicToggle.textContent = config.music.startText;
-            });
-        }
-    }
-
-    // Toggle music on button click
-    musicToggle.addEventListener('click', () => {
-        if (bgMusic.paused) {
-            bgMusic.play();
-            musicToggle.textContent = config.music.stopText;
-        } else {
-            bgMusic.pause();
-            musicToggle.textContent = config.music.startText;
-        }
+    
+    btnStart.addEventListener('click', () => {
+      bgMusic.play();
+      musicToggle.textContent = '🔇 Stop Music'; 
+      welcomeScreen.classList.add('fade-out');
     });
-} 
+    
+    musicToggle.addEventListener('click', () => {
+      if (bgMusic.paused) {
+        bgMusic.play();
+        musicToggle.textContent = '🔇 Stop Music';
+      } else {
+        bgMusic.pause();
+        musicToggle.textContent = '🎵 Play Music';
+      }
+    });
+  }
+}
+
+// =========================================
+// 3. LOGIKA VIDEO
+// =========================================
+function initVideo() {
+  const video = document.getElementById('introVideo');
+  const choiceContainer = document.getElementById('choiceContainer');
+
+  if (video && choiceContainer) {
+    video.addEventListener('ended', () => {
+      choiceContainer.classList.remove('hidden');
+      setTimeout(() => {
+        choiceContainer.classList.add('show');
+      }, 10);
+    });
+  }
+}
+
+// =========================================
+// 4. LOGIKA TOMBOL PILIHAN (YES & NO LUCU)
+// =========================================
+const messages = [
+  "Yooo Bubu Really????",
+  "Oh c'mon pls pls??",
+  "Bubu please...",
+  "Think Againnn!!!",
+  "If u click this, i will be sad...",
+  "Now I'm sad :(( ",
+  "I'm very very very sadddd...",
+  "Okay im give up...",
+  "Just kidding, Bubu c'mon pwissssss! ❤️"
+];
+
+let messageIndex = 0;
+
+function initInteractiveButtons() {
+  // Mengambil elemen tombol berdasarkan ID dari HTML kamu sebelumnya
+  const btnNo = document.getElementById('btnNo');
+  const btnYes = document.getElementById('btnYes');
+
+  if (btnNo && btnYes) {
+    // Saat tombol "No" diklik
+    btnNo.addEventListener('click', () => {
+      // 1. Ganti teks tombol No
+      btnNo.textContent = messages[messageIndex];
+      messageIndex = (messageIndex + 1) % messages.length;
+      
+      // 2. Buat tombol Yes membesar
+      const currentSize = parseFloat(window.getComputedStyle(btnYes).fontSize);
+      // Membesarkan font 1.5x lipat setiap kali diklik
+      btnYes.style.fontSize = `${currentSize * 1.5}px`;
+      
+      // (Opsional) Membesarkan padding agar tombol makin raksasa secara proporsional
+      const currentPadding = parseFloat(window.getComputedStyle(btnYes).paddingTop);
+      btnYes.style.padding = `${currentPadding * 1.2}px ${currentPadding * 2.4}px`;
+    });
+
+    // Saat tombol "Yes" diklik
+    btnYes.addEventListener('click', () => {
+      // 1. Ganti dengan nomor WhatsApp kamu (Wajib gunakan format internasional tanpa tanda '+')
+      // Contoh: Jika nomormu 08123456789, tulis 628123456789
+      const nomorWA = "6285780176128"; 
+      
+      // 2. Tulis pesan otomatis yang akan masuk ke draft WA-nya
+      const pesan = "YAYYYY! I said YES Bebe! Love you too! 💖";
+      
+      // 3. Menggabungkan nomor dan pesan menjadi tautan WhatsApp yang valid
+      // encodeURIComponent berfungsi mengubah spasi dan emoji agar bisa terbaca oleh link internet
+      const urlWA = `https://wa.me/${nomorWA}?text=${encodeURIComponent(pesan)}`;
+      
+      // 4. Membuka WhatsApp di tab baru
+      window.open(urlWA, "_blank");
+    });
+  }
+}
+
+// =========================================
+// 5. JALANKAN SEMUA SAAT HALAMAN DIMUAT
+// =========================================
+// Semua dipanggil di dalam satu tempat ini agar rapi dan tidak bentrok
+document.addEventListener('DOMContentLoaded', () => {
+  createFloating();
+  initMusicAndWelcome();
+  initVideo();
+  initInteractiveButtons(); // Memanggil fungsi tombol lucunya
+});

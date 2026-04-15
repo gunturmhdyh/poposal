@@ -1,0 +1,281 @@
+/* =========================================
+   1. VARIABEL WARNA & ANIMASI (Sesuai Aslimu)
+   ========================================= */
+:root {
+    /* Colors */
+    --background-color-1: #ffafbd;
+    --background-color-2: #ffc3a0;
+    --button-color: #ff6b6b;
+    --button-hover: #ff8787;
+    --text-color: #ff4757;
+
+    /* Animations */
+    --float-duration: 15s;
+    --float-distance: 50px;
+}
+
+/* =========================================
+   2. GAYA DASAR (Layout Utama)
+   ========================================= */
+body {
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+  background: #0f172a; 
+  color: white;
+  overflow: hidden; 
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow-x: hidden; /* Mencegah scroll ke samping */
+}
+
+.container {
+    background: linear-gradient(135deg, var(--background-color-1), var(--background-color-2));
+    padding: 2rem;
+    border-radius: 20px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    width: 90%;
+    max-width: 720px; /* Lebar maksimal diperbesar sedikit untuk video */
+    margin: 20px;
+    position: relative;
+    z-index: 2; /* Berada di atas elemen melayang */
+}
+
+h1 {
+    color: var(--button-color);
+    margin-bottom: 1.5rem;
+}
+
+/* =========================================
+   3. ANIMASI ELEMEN MELAYANG
+   ========================================= */
+.floating-elements {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1;
+}
+
+/* Class ini akan dipanggil oleh JavaScript */
+.heart, .float {
+    position: absolute;
+    font-size: 2rem;
+    bottom: -50px; /* Mulai dari luar layar bawah */
+    animation: float var(--float-duration) linear infinite;
+}
+
+@keyframes float {
+    0% {
+        transform: translateY(100vh) translateX(0) rotate(0deg);
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(-20vh) translateX(var(--float-distance)) rotate(360deg);
+        opacity: 0;
+    }
+}
+
+/* =========================================
+   4. KONTROL MUSIK
+   ========================================= */
+.music-controls {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+}
+
+.music-btn {
+    background: var(--button-color);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.music-btn:hover {
+    transform: scale(1.05);
+    background: var(--button-hover);
+}
+
+/* =========================================
+   5. BAGIAN VIDEO (Diperbarui)
+   ========================================= */
+.video-section {
+    margin: 20px 0;
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+
+#introVideo {
+    width: 100%; /* Tetap responsif mengikuti layar */
+    
+    /* PENTING: Batasi ukuran maksimal agar tidak raksasa */
+    max-width: 350px; /* Asumsi videomu berdiri/vertikal. (Ubah ke 600px jika videonya mendatar/landscape) */
+    max-height: 60vh; /* Tinggi maksimal 60% dari layar, agar tombol pilihan di bawahnya nanti tetap muat! */
+    
+    /* Mencegah gepeng */
+    height: auto;
+    object-fit: contain; /* Memastikan seluruh video muat tanpa terpotong atau ditarik */
+    background-color: #000; /* Memberi latar hitam elegan di belakang video jika rasionya tidak pas */
+    
+    border-radius: 15px;
+    box-shadow: 0 8px 25px rgba(255, 107, 107, 0.3);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+#introVideo:hover {
+    box-shadow: 0 12px 35px rgba(255, 107, 107, 0.4);
+    transform: scale(1.02);
+}
+
+/* =========================================
+   6. TOMBOL PILIHAN (Muncul setelah video)
+   ========================================= */
+.choice-container {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 25px;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+}
+
+.choice-container.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.hidden {
+    display: none !important;
+}
+
+.btn-choice {
+    background: var(--button-color);
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 25px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform 0.3s ease, 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 4px 10px rgba(255, 107, 107, 0.3);
+}
+
+.btn-choice:hover {
+    transform: scale(1.08);
+    background: var(--button-hover);
+    box-shadow: 0 6px 15px rgba(255, 107, 107, 0.4);
+}
+
+.btn-choice:active {
+    transform: scale(0.95);
+}
+
+/* Responsif untuk HP */
+@media (max-width: 480px) {
+    .choice-container {
+        flex-direction: column; /* Tombol jadi atas-bawah di layar kecil */
+    }
+}
+/* =========================================
+   ANIMASI ELEMEN MELAYANG (Floating Emojis)
+   ========================================= */
+.floating-elements {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none; /* Memastikan emoji tidak menutupi klik tombol */
+  z-index: 0; /* Ditaruh di lapisan paling belakang */
+}
+
+.float {
+  position: absolute;
+  bottom: -10vh; /* Mulai dari bawah layar agar tidak tiba-tiba muncul */
+  font-size: 28px;
+  opacity: 0.8;
+  animation: floatUp linear infinite; /* Menjalankan animasi terus menerus */
+}
+/* Keyframes untuk pergerakan emoji dari bawah ke atas layar */
+@keyframes floatUp {
+  0% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-120vh) rotate(360deg); /* Bergerak ke atas dan berputar */
+    opacity: 0;
+  }
+}
+
+/* =========================================
+   7. LAYAR PEMBUKA (Welcome Screen)
+   ========================================= */
+.welcome-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: #0f172a;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999; /* Pastikan selalu berada di lapisan paling depan */
+    transition: opacity 0.8s ease, visibility 0.8s ease; /* Efek menghilang perlahan */
+}
+
+.welcome-content {
+    text-align: center;
+    background: linear-gradient(135deg, var(--background-color-1), var(--background-color-2));
+    padding: 3rem;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    animation: float var(--float-duration) linear infinite;
+    animation: bounce 2s infinite alternate; /* Sedikit animasi naik turun */
+    font-family: Arial, sans-serif;
+}
+
+.welcome-content h2 {
+    color: rgb(255, 255, 255);
+    margin-bottom: 20px;
+}
+
+.btn-start {
+    background: var(--button-color);
+    color: white;
+    border: none;
+    padding: 15px 30px;
+    border-radius: 30px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(255, 107, 107, 0.4);
+    transition: transform 0.3s ease;
+}
+
+.btn-start:hover {
+    transform: scale(1.1);
+    background: var(--button-hover);
+}
+
+/* Class untuk menyembunyikan layar pembuka via JavaScript */
+.welcome-screen.fade-out {
+    opacity: 0;
+    visibility: hidden;
+}

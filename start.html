@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Video untuk Jade 💝</title>
+  <link rel="stylesheet" href="start.css">
+</head>
+<body>
+
+  <div id="welcomeScreen" class="welcome-screen">
+    <div class="welcome-content">
+      <h2>JK, hehe... 😝 </h2>
+      <button id="btnStart" class="btn-start">Click Here!!! 🎁</button>
+    </div>
+  </div>
+  
+  <div class="floating-elements"></div>
+
+  <div class="container wrapper">
+    <h1>I hope u watch this video till end 😁💝</h1>
+    
+    <div id="musicControls" class="music-controls">
+      <button id="musicToggle" class="music-btn">🎵 Play Music</button>
+      <audio id="bgMusic" loop>
+        <source id="musicSource" type="audio/mpeg">
+        Your browser does not support the audio element.
+      </audio>
+    </div>
+
+    <div class="video-section">
+      <video id="introVideo" controls preload="metadata" poster="jade-poster.jpg">
+        <source src="WhatsApp Video 2025-11-28 at 09.14.50_53b82f4d - Copy.mp4" type="video/mp4">
+        <source src="WhatsApp Video 2025-11-28 at 09.14.50_53b82f4d - Copy.mp4" type="video/webm">
+        Browser tidak support video.
+      </video>
+    </div>
+
+    <div id="choiceContainer" class="choice-container hidden">
+      <button class="btn-choice" id="btnYes">Yeahh! 💖</button>
+      <button class="btn-choice" id="btnNo">eww 🙈</button>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+  <script>
+    const messages = [
+    "Yooo Bubu Really????",
+    "Oh c'mon pls pls??",
+    "Bubu please...",
+    "Think Againnn!!!",
+    "If u click this, i will be sad...",
+    "Now I'm sad :(( ",
+    "I'm very very very sadddd...",
+    "Okay im give up...",
+    "Just kidding, Bubu c'mon pwissssss! ❤️"
+];
+
+let messageIndex = 0;
+
+function handleNoClick() {
+    const btnNo = document.querySelector('.no-button');
+    const btnYes = document.querySelector('.yes-button');
+    btnNo.textContent = messages[messageIndex];
+    messageIndex = (messageIndex + 1) % messages.length;
+    const currentSize = parseFloat(window.getComputedStyle(btnYes).fontSize);
+    btnYes.style.fontSize = `${currentSize * 1.5}px`;
+}
+
+//function handleYesClick() {
+  //  window.location.href = "ifYes.html";
+
+//}
+  </script>
+</body>
+</html>
