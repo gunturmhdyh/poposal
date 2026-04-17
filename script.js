@@ -5,7 +5,6 @@ const emojis = ['❤️','💖','💗','💓','🧸'];
 
 function createFloating() {
   const container = document.querySelector('.floating-elements');
-  
   if (!container) return; 
 
   for (let i = 0; i < 25; i++) {
@@ -27,21 +26,19 @@ function createFloating() {
 function initMusicAndWelcome() {
   const musicToggle = document.getElementById('musicToggle');
   const bgMusic = document.getElementById('bgMusic');
-  const musicSource = document.getElementById('musicSource');
   
   const welcomeScreen = document.getElementById('welcomeScreen');
   const btnStart = document.getElementById('btnStart');
   
-  if (musicToggle && bgMusic && musicSource && welcomeScreen && btnStart) {
-    musicSource.src = 'forbubu.mp3'; // File musikmu
-    bgMusic.load();
-    
+  if (musicToggle && bgMusic && welcomeScreen && btnStart) {
+    // Memutar musik saat tombol awal diklik
     btnStart.addEventListener('click', () => {
       bgMusic.play();
       musicToggle.textContent = '🔇 Stop Music'; 
       welcomeScreen.classList.add('fade-out');
     });
     
+    // Tombol kontrol musik di pojok
     musicToggle.addEventListener('click', () => {
       if (bgMusic.paused) {
         bgMusic.play();
@@ -55,19 +52,35 @@ function initMusicAndWelcome() {
 }
 
 // =========================================
-// 3. LOGIKA VIDEO
+// 3. LOGIKA VIDEO (YOUTUBE API) - BARU!
 // =========================================
-function initVideo() {
-  const video = document.getElementById('introVideo');
-  const choiceContainer = document.getElementById('choiceContainer');
+// Memanggil "mesin" API dari YouTube secara otomatis
+var tag = document.createElement('script');
+tag.src = "https://www.youtube.com/iframe_api";
+var firstScriptTag = document.getElementsByTagName('script')[0];
+firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
-  if (video && choiceContainer) {
-    video.addEventListener('ended', () => {
+var player;
+// Fungsi ini akan otomatis dipanggil oleh YouTube setelah mesinnya siap
+function onYouTubeIframeAPIReady() {
+  player = new YT.Player('introVideo', {
+    events: {
+      'onStateChange': onPlayerStateChange
+    }
+  });
+}
+
+// Fungsi ini memantau perubahan status video (Play, Pause, Ended)
+function onPlayerStateChange(event) {
+  // Angka 0 (YT.PlayerState.ENDED) artinya video sudah benar-benar selesai
+  if (event.data === 0) {
+    const choiceContainer = document.getElementById('choiceContainer');
+    if (choiceContainer) {
       choiceContainer.classList.remove('hidden');
       setTimeout(() => {
         choiceContainer.classList.add('show');
       }, 10);
-    });
+    }
   }
 }
 
@@ -87,32 +100,27 @@ const messages = [
 ];
 
 let messageIndex = 0;
-
 let noClickCount = 0; 
 
 function initInteractiveButtons() {
   const btnNo = document.getElementById('btnNo');
   const btnYes = document.getElementById('btnYes');
-  
-  // Nomor WA ditaruh di atas agar bisa dipakai oleh tombol Yes maupun No
   const nomorWA = "6285780176128"; 
 
   if (btnNo && btnYes) {
-    // =========================================
     // JIKA TOMBOL "NO" DIKLIK
-    // =========================================
     btnNo.addEventListener('click', () => {
-      noClickCount++; // Tambah hitungan
+      noClickCount++;
 
-      // CEK: Jika dia sudah menekan "No" tepat 3 kali, langsung buka WA!
+      // Jika hitungan mencapai 3, langsung buka WA dengan pesan friendzone
       if (noClickCount === 3) {
         const pesanTolak = "no po, i think we just can be friends only :)";
         const urlWATolak = `https://wa.me/${nomorWA}?text=${encodeURIComponent(pesanTolak)}`;
         window.open(urlWATolak, "_blank");
-        return; // Hentikan kode di sini agar tombol tidak membesar lagi
+        return; 
       }
 
-      // Jika belum 3 kali, jalankan trik tombol membesar seperti biasa
+      // Membesarkan tombol Yes dan mengganti teks tombol No
       btnNo.textContent = messages[messageIndex];
       messageIndex = (messageIndex + 1) % messages.length;
       
@@ -123,25 +131,21 @@ function initInteractiveButtons() {
       btnYes.style.padding = `${currentPadding * 1.2}px ${currentPadding * 2.4}px`;
     });
 
-    // =========================================
     // JIKA TOMBOL "YES" DIKLIK
-    // =========================================
     btnYes.addEventListener('click', () => {
-      // Pesan utama yang manis
       const pesanTerima = "YAYYYY! I said YES Bebe! Love you too! 💖";
-      
       const urlWATerima = `https://wa.me/${nomorWA}?text=${encodeURIComponent(pesanTerima)}`;
       window.open(urlWATerima, "_blank");
     });
   }
 }
+
 // =========================================
 // 5. JALANKAN SEMUA SAAT HALAMAN DIMUAT
 // =========================================
-// Semua dipanggil di dalam satu tempat ini agar rapi dan tidak bentrok
 document.addEventListener('DOMContentLoaded', () => {
   createFloating();
   initMusicAndWelcome();
-  initVideo();
-  initInteractiveButtons(); // Memanggil fungsi tombol lucunya
+  initInteractiveButtons();
+  // Catatan: initVideo() sudah kita hapus dari sini karena YouTube API berjalan secara otomatis.
 });
