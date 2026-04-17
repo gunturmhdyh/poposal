@@ -88,47 +88,53 @@ const messages = [
 
 let messageIndex = 0;
 
+let noClickCount = 0; 
+
 function initInteractiveButtons() {
-  // Mengambil elemen tombol berdasarkan ID dari HTML kamu sebelumnya
   const btnNo = document.getElementById('btnNo');
   const btnYes = document.getElementById('btnYes');
+  
+  // Nomor WA ditaruh di atas agar bisa dipakai oleh tombol Yes maupun No
+  const nomorWA = "6285780176128"; 
 
   if (btnNo && btnYes) {
-    // Saat tombol "No" diklik
+    // =========================================
+    // JIKA TOMBOL "NO" DIKLIK
+    // =========================================
     btnNo.addEventListener('click', () => {
-      // 1. Ganti teks tombol No
+      noClickCount++; // Tambah hitungan
+
+      // CEK: Jika dia sudah menekan "No" tepat 3 kali, langsung buka WA!
+      if (noClickCount === 3) {
+        const pesanTolak = "no po, i think we just can be friends only :)";
+        const urlWATolak = `https://wa.me/${nomorWA}?text=${encodeURIComponent(pesanTolak)}`;
+        window.open(urlWATolak, "_blank");
+        return; // Hentikan kode di sini agar tombol tidak membesar lagi
+      }
+
+      // Jika belum 3 kali, jalankan trik tombol membesar seperti biasa
       btnNo.textContent = messages[messageIndex];
       messageIndex = (messageIndex + 1) % messages.length;
       
-      // 2. Buat tombol Yes membesar
       const currentSize = parseFloat(window.getComputedStyle(btnYes).fontSize);
-      // Membesarkan font 1.5x lipat setiap kali diklik
       btnYes.style.fontSize = `${currentSize * 1.5}px`;
       
-      // (Opsional) Membesarkan padding agar tombol makin raksasa secara proporsional
       const currentPadding = parseFloat(window.getComputedStyle(btnYes).paddingTop);
       btnYes.style.padding = `${currentPadding * 1.2}px ${currentPadding * 2.4}px`;
     });
 
-    // Saat tombol "Yes" diklik
+    // =========================================
+    // JIKA TOMBOL "YES" DIKLIK
+    // =========================================
     btnYes.addEventListener('click', () => {
-      // 1. Ganti dengan nomor WhatsApp kamu (Wajib gunakan format internasional tanpa tanda '+')
-      // Contoh: Jika nomormu 08123456789, tulis 628123456789
-      const nomorWA = "6285780176128"; 
+      // Pesan utama yang manis
+      const pesanTerima = "YAYYYY! I said YES Bebe! Love you too! 💖";
       
-      // 2. Tulis pesan otomatis yang akan masuk ke draft WA-nya
-      const pesan = "YAYYYY! I said YES Bebe! Love you too! 💖";
-      
-      // 3. Menggabungkan nomor dan pesan menjadi tautan WhatsApp yang valid
-      // encodeURIComponent berfungsi mengubah spasi dan emoji agar bisa terbaca oleh link internet
-      const urlWA = `https://wa.me/${nomorWA}?text=${encodeURIComponent(pesan)}`;
-      
-      // 4. Membuka WhatsApp di tab baru
-      window.open(urlWA, "_blank");
+      const urlWATerima = `https://wa.me/${nomorWA}?text=${encodeURIComponent(pesanTerima)}`;
+      window.open(urlWATerima, "_blank");
     });
   }
 }
-
 // =========================================
 // 5. JALANKAN SEMUA SAAT HALAMAN DIMUAT
 // =========================================
